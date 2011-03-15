@@ -21,7 +21,7 @@ module AttrEnumerator
 
       prefix = options.delete(:prefix)
       enumerators.each do |enumerator|
-        define_method(prefix + enumerator.underscore.parameterize('_') + '?') do
+        define_method(prefix + enumerator.to_s.underscore.parameterize('_') + '?') do
           self.send(field) == enumerator
         end
       end

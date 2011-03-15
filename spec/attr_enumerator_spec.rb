@@ -37,6 +37,11 @@ describe "AttrEnumerator" do
       TestModel.attr_enumerator :color, ['red', 'blue'], :constant => true
       TestModel::COLORS.should == ['red', 'blue']
     end
+
+    it "should freeze the array to prevent editing" do
+      TestModel.attr_enumerator :color, ['red', 'blue']
+      expect { TestModel::COLORS << 'green' }.to raise_error(TypeError, "can't modify frozen array")
+    end
   end
 
   describe "convinience methods" do
@@ -99,6 +104,17 @@ describe "AttrEnumerator" do
       TestModel.attr_enumerator :color, ['red', 'blue'], :allow_nil => true
       instance.color = nil
       instance.should be_valid
+    end
+
+    it "should handle symbols" do
+      TestModel.attr_enumerator :color, [:red, :blue]
+
+      instance.color = :red
+      instance.should be_valid
+      instance.should be_red
+
+      instance.color = 'red'
+      instance.should_not be_valid
     end
   end
 
