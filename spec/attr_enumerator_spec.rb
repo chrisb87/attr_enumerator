@@ -18,24 +18,24 @@ describe "AttrEnumerator" do
   end
 
   context "generated constant" do
-    it "should create a constant with possible values" do
+    it "should generate a constant by default" do
       TestModel.attr_enumerator :color, ['red', 'blue']
       TestModel::COLORS.should == ['red', 'blue']
+    end
+
+    it "should allow for explicitly generating the default constant" do
+      TestModel.attr_enumerator :color, ['red', 'blue'], :constant => true
+      TestModel::COLORS.should == ['red', 'blue']
+    end
+
+    it "should allow for not generating a constant" do
+      TestModel.attr_enumerator :color, ['red', 'blue'], :constant => false
+      TestModel.constants.should_not include('COLORS')
     end
 
     it "should allow for a custom constant name" do
       TestModel.attr_enumerator :color, ['red', 'blue'], :constant => :POSSIBLE_COLORS
       TestModel::POSSIBLE_COLORS.should == ['red', 'blue']
-    end
-
-    it "should allow for not generating the constant" do
-      TestModel.attr_enumerator :color, ['red', 'blue'], :constant => false
-      TestModel.constants.should_not include('COLORS')
-    end
-
-    it "should define the standard constant when using option :constant => true" do
-      TestModel.attr_enumerator :color, ['red', 'blue'], :constant => true
-      TestModel::COLORS.should == ['red', 'blue']
     end
 
     it "should freeze the constant to prevent editing" do
@@ -56,7 +56,7 @@ describe "AttrEnumerator" do
       instance.should_not be_blue
     end
 
-    it "should allow for prefixing the convinience methods" do
+    it "should allow for prefixing the generated methods" do
       TestModel.attr_enumerator :color, ['red', 'blue'], :prefix => 'colored_'
       instance.color = 'red'
 
@@ -67,16 +67,16 @@ describe "AttrEnumerator" do
       instance.should_not be_colored_blue
     end
 
-    it "should handle strangely formated enumerations" do
+    it "should generate methods with friendly names" do
       enumerations = {
         :has_space? => 'has space',
         :has_dash? => 'has-dash',
+        :other_characters? => 'other%*characters',
         :uppercase? => 'UPPERCASE',
         :camel_case? => 'CamelCase',
-        :strange_character? => 'strange%character',
         :ends_with_dot? => 'ends.with.dot.'
       }
-      
+
       TestModel.attr_enumerator :enumerations, enumerations.values
 
       enumerations.keys.each do |method_name|
