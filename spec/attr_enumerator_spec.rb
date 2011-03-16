@@ -17,7 +17,7 @@ describe "AttrEnumerator" do
     @instance ||= TestModel.new(fields)
   end
 
-  describe "enum constant" do
+  context "generated constant" do
     it "should create a constant with possible values" do
       TestModel.attr_enumerator :color, ['red', 'blue']
       TestModel::COLORS.should == ['red', 'blue']
@@ -38,22 +38,22 @@ describe "AttrEnumerator" do
       TestModel::COLORS.should == ['red', 'blue']
     end
 
-    it "should freeze the array to prevent editing" do
+    it "should freeze the constant to prevent editing" do
       TestModel.attr_enumerator :color, ['red', 'blue']
       expect { TestModel::COLORS << 'green' }.to raise_error(TypeError, "can't modify frozen array")
     end
   end
 
-  describe "convinience methods" do
-    it "should create convinience methods for each enum type" do
+  context "generated methods" do
+    it "should generate methods for each enumeration" do
       TestModel.attr_enumerator :color, ['red', 'blue']
       instance.color = 'red'
 
       instance.should respond_to :red?
-      instance.red?.should be_true
+      instance.should be_red
 
       instance.should respond_to :blue?
-      instance.blue?.should be_false
+      instance.should_not be_blue
     end
 
     it "should allow for prefixing the convinience methods" do
@@ -61,27 +61,31 @@ describe "AttrEnumerator" do
       instance.color = 'red'
 
       instance.should respond_to :colored_red?
-      instance.colored_red?.should be_true
+      instance.should be_colored_red
 
       instance.should respond_to :colored_blue?
-      instance.colored_blue?.should be_false
+      instance.should_not be_colored_blue
     end
 
-    it "should handle strangely formated choices" do
-      TestModel.attr_enumerator :choices, \
-      ['choice one', 'choice-two', 'CHOICE THREE', 'ChoiceFour', 'choice%five', 'choice☺six', 'choice_seven.']
+    it "should handle strangely formated enumerations" do
+      enumerations = {
+        :has_space? => 'has space',
+        :has_dash? => 'has-dash',
+        :uppercase? => 'UPPERCASE',
+        :camel_case? => 'CamelCase',
+        :strange_character? => 'strange%character',
+        :ends_with_dot? => 'ends.with.dot.'
+      }
+      
+      TestModel.attr_enumerator :enumerations, enumerations.values
 
-      instance.should respond_to :choice_one?
-      instance.should respond_to :choice_two?
-      instance.should respond_to :choice_three?
-      instance.should respond_to :choice_four?
-      instance.should respond_to :choice_five?
-      instance.should respond_to :choice_six?
-      instance.should respond_to :choice_seven?
+      enumerations.keys.each do |method_name|
+        instance.should respond_to method_name
+      end
     end
   end
 
-  describe "validation" do
+  context "validation" do
     it "should have a default message" do
       TestModel.attr_enumerator :color, ['red', 'blue']
       instance.should_not be_valid
@@ -118,8 +122,8 @@ describe "AttrEnumerator" do
     end
   end
 
-  describe "ActiveRecord" do
-    it "should respond to attr_enumerator" do
+  context "ActiveRecord" do
+    it "should automatically work with ActiveRecord" do
       ActiveRecord::Base.should respond_to :attr_enumerator
     end
   end
