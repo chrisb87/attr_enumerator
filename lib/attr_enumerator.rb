@@ -5,27 +5,44 @@ module AttrEnumerator
   extend ActiveSupport::Concern
 
   DEFAULT_OPTIONS = {
-    :constant => true,
-    :prefix => '',
-    :message => :invalid
+    :generate_constant => true,
+    :generate_methods => true,
+    :generate_scopes => true,
+    :message => :invalid,
+    :prefix => true,
+    :suffix => ''
   }
 
   module ClassMethods
     def attr_enumerator(field, enumerators, opts={})
       options = opts.reverse_merge(DEFAULT_OPTIONS)
 
-      unless !(constant = options.delete(:constant))
-        const_name = constant == true ? field.to_s.pluralize.upcase : constant.to_s
+      generate_constant = options.delete(:generate_constant)
+      generate_methods = options.delete(:generate_methods)
+      generate_scopes = options.delete(:generate_scopes)
+
+      prefix = options.delete(:prefix)
+      prefix = { true => field.to_s + '_', false => '' }[prefix] || prefix.to_s
+      suffix = options.delete(:suffix).to_s
+
+      if generate_constant
+        const_name = generate_constant == true ? field.to_s.pluralize.upcase : generate_constant.to_s
         const_set(const_name, enumerators).freeze
       end
 
-      method_prefix = options.delete(:prefix)
       enumerators.each do |enumerator|
-        method_name = method_prefix + enumerator.to_s.underscore.parameterize('_') + '?'
-        define_method(method_name){ self.send(field) == enumerator }
+        formatted_enumerator = prefix + enumerator.to_s.underscore.parameterize('_') + suffix
+
+        if generate_methods
+          define_method(formatted_enumerator + '?'){ self.send(field) == enumerator }
+        end
+
+        if generate_scopes && self.respond_to?(:scope)
+          scope formatted_enumerator, where(field => enumerator)
+        end
       end
 
-      validates_inclusion_of field, options.merge({ :in => enumerators })
+      validates_inclusion_of field, options.merge(:in => enumerators)
     end
   end
 end
