@@ -42,7 +42,7 @@ module AttrEnumerator
         end
       end
 
-      validates_inclusion_of field, options.merge(:in => enumerators)
+      validates field, :inclusion => options.merge(:in => enumerators)
     end
   end
 end
