@@ -22,8 +22,10 @@ module AttrEnumerator
       generate_scopes = options.delete(:generate_scopes)
 
       prefix = options.delete(:prefix)
-      prefix = { true => field.to_s + '_', false => '' }[prefix] || prefix.to_s
-      suffix = options.delete(:suffix).to_s
+      prefix = {true => field.to_s + '_', false => ''}[prefix] || prefix.to_s
+
+      suffix = options.delete(:suffix)
+      suffix = {true => '', false => ''}[suffix] || suffix.to_s
 
       if generate_constant
         const_name = generate_constant == true ? field.to_s.pluralize.upcase : generate_constant.to_s

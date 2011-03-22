@@ -86,12 +86,32 @@ describe "AttrEnumerator" do
         instance.should_not be_colored_blue
       end
 
+      it "should allow for explicitly using the default prefix" do
+        subject.attr_enumerator :choice, ['red', 'blue'], :prefix => true
+        instance.should respond_to :choice_red?
+      end
+
+      it "should allow for no prefix" do
+        subject.attr_enumerator :choice, ['red', 'blue'], :prefix => false
+        instance.should respond_to :red?
+      end
+
       it "should allow for a custom suffix" do
         subject.attr_enumerator :choice, ['first', 'second'], :prefix => '', :suffix => '_choice'
         instance.choice = 'first'
 
         instance.should respond_to :first_choice?
         instance.should be_first_choice
+      end
+
+      it "should allow for explicitly using the default suffix" do
+        subject.attr_enumerator :choice, ['red', 'blue'], :suffix => true
+        instance.should respond_to :choice_red?
+      end
+
+      it "should allow for no suffix" do
+        subject.attr_enumerator :choice, ['red', 'blue'], :suffix => false
+        instance.should respond_to :choice_red?
       end
 
       it "should generate methods with friendly names" do
