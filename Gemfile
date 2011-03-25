@@ -7,6 +7,7 @@ group :development do
   gem "activerecord", ">= 3.0.0"
   gem "jeweler"
   gem "rspec", ">= 2.5.0"
+  gem "ruby-debug"
   gem "sqlite3"
   gem "watchr"
 end

@@ -9,12 +9,6 @@ require 'attr_enumerator'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 class ActiveRecordModel < ActiveRecord::Base
-  establish_connection :adapter => 'sqlite3',
-                       :database => ':memory:'
-
-  connection.execute <<-EOS
-    CREATE TABLE #{table_name} (
-      #{primary_key} integer PRIMARY KEY AUTOINCREMENT
-    )
-  EOS
+  establish_connection(:adapter => 'sqlite3', :database => ':memory:')
+  connection.execute("CREATE TABLE #{table_name} (#{primary_key} integer PRIMARY KEY AUTOINCREMENT)")
 end

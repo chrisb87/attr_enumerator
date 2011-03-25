@@ -1,3 +1,89 @@
 = attr_enumerator
 
-Enumerated attributes for ActiveModel
+A customizable method for restricting an attribute to a set of choices. By default, <tt>attr_enumerator</tt> will create:
+
+* A <b>validation</b> requiring the attribute value to be one of the choices
+* A <b>class constant</b> containing all choices
+* <b>Instance methods</b> for each choice, returning <tt>true</tt> if the attribute is that value and <tt>false</tt> otherwise
+* <b>Scopes</b> for each choice that retrieve records where the attribute is that value (only applicable when used with <tt>ActiveRecord</tt>)
+
+<tt>AttrEnumerator</tt> is automatically included in <tt>ActiveRecord::Base</tt> and is available for use in <tt>ActiveRecord</tt> models. 
+
+  class Car < ActiveRecord::Base
+    attr_enumerator :color, ["red", "blue"]
+  end
+
+To use <tt>attr_enumerator</tt> on a class that does not descend from <tt>ActiveRecord::Base</tt> it must include <tt>ActiveModel::Validations</tt> and provide an accessor to the attribute.
+
+  class Car
+    include ActiveModel::Validations
+    include AttrEnumerator
+
+    attr_accessor :color
+    attr_enumerator :color, ["red", "blue"]
+  end
+
+== Configuration
+
+Options may be passed to <tt>attr_enumerator</tt> to configure its behavior. For instance, use <tt>:create_constant => false</tt> to prevent a class constant from being created.
+
+  class Car < ActiveRecord::Base
+    attr_enumerator :color, ["red", "blue"], :create_constant => false
+  end
+
+Options that may be passed directly to <tt>attr_enumerator</tt> may also be configured globally. Options passed directly to <tt>attr_enumerator</tt> will override global options.
+
+  AttrEnumerator::Options.configure do |config|
+    config.create_constant = false
+  end
+
+=== Options
+* <tt>create_constant</tt> (default: <tt>true</tt>)
+
+  When <tt>true</tt>, a class constant containing an array of choices is created using the pluralized, uppercased attribute name. Set to a string or symbol to change the constant name or <tt>false</tt> to not create the constant.
+  
+* <tt>create_methods</tt> (default: <tt>true</tt>)
+
+  When <tt>true</tt>, create a method for each choice that returns <tt>true</tt> if the attribute is that value and <tt>false</tt> otherwise. Use the <tt>prefix</tt> and <tt>suffix</tt> options to customize the method names. Set to <tt>false</tt> to not create methods.
+
+* <tt>create_scopes</tt> (default: <tt>true</tt>, ignored when not using <tt>ActiveRecord</tt>)
+
+  When <tt>true</tt>, create a scope for each choice that retrieves records where the attribute is that value. Use the <tt>prefix</tt> and <tt>suffix</tt> options to customize the scope names. Set to <tt>false</tt> to not create scopes.
+
+* <tt>prefix</tt> (default: <tt>true</tt>)
+
+  When <tt>true</tt>, prefixes created methods and scopes with the attribute name. Set to a string or symbol to change the prefix or <tt>false</tt> to disable.
+  
+* <tt>suffix</tt> (default: <tt>false</tt>)
+
+  See <tt>prefix</tt>.
+
+* <tt>message</tt> (default: <tt>"is invalid"</tt>)
+
+  Specifies the error message when the attribute is not a valid value. Use <tt>%{value}</tt> to refer to the value of the attribute, e.g. <tt>"%{value} is not a valid choice"</tt>.
+
+* <tt>allow_nil</tt> (default: <tt>false</tt>)
+
+  Allow the attribute to be <tt>nil</tt>.
+
+* <tt>allow_blank</tt> (default: <tt>false</tt>)
+
+  Allow the attribute to be blank.
+
+* <tt>if</tt> (default: unused)
+
+  Specifies a method, proc or string to call to determine if the validation should occur. See <tt>ActiveModel::Validations</tt> for more details.
+
+* <tt>unless</tt>
+
+  Opposite of <tt>if</tt>.
+
+== Contributing to attr_enumerator
+
+* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
+* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
+* Fork the project
+* Start a feature/bugfix branch
+* Commit and push until you are happy with your contribution
+* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
+* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
