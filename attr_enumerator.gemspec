@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Chris Baker"]
   s.date = %q{2011-03-25}
-  s.description = %q{Enumerated attributes for ActiveModel}
-  s.email = %q{baker@socialvibe.com}
+  s.description = %q{A customizable method for restricting an attribute to a set of choices}
+  s.email = %q{baker.chris.3@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.rdoc"
@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
-  s.summary = %q{Enumerated attributes for ActiveModel}
+  s.summary = %q{A customizable method for restricting an attribute to a set of choices}
   s.test_files = [
     "spec/attr_enumerator_spec.rb",
     "spec/spec_helper.rb"

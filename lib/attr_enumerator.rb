@@ -41,7 +41,7 @@ module AttrEnumerator
     def self.parse(field, choices, opts, klass)
       {}.merge!(config).merge!(opts).merge!(:in => choices).tap do |options|
         options[:validation_options] = options.slice(*VALIDATION_OPTIONS)
-        options.reject!{|k,v| VALIDATION_OPTIONS.include?(k)}
+        options.reject!{ |k,v| VALIDATION_OPTIONS.include?(k) }
 
         options[:create_scopes] &= klass.respond_to?(:scope)
 

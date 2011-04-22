@@ -1,16 +1,18 @@
 = attr_enumerator
 
-A customizable method for restricting an attribute to a set of choices. By default, <tt>attr_enumerator</tt> will create:
+A customizable method for restricting an attribute to a set of choices. 
 
-* A <b>validation</b> requiring the attribute value to be one of the choices
-* A <b>class constant</b> containing all choices
+By default, <tt>attr_enumerator</tt> will create:
+
+* A <b>validation</b> requiring the attribute value to be one of the provided choices
+* A <b>class constant</b> containing all valid choices
 * <b>Instance methods</b> for each choice, returning <tt>true</tt> if the attribute is that value and <tt>false</tt> otherwise
 * <b>Scopes</b> for each choice that retrieve records where the attribute is that value (only applicable when used with <tt>ActiveRecord</tt>)
 
-<tt>AttrEnumerator</tt> is automatically included in <tt>ActiveRecord::Base</tt> and is available for use in <tt>ActiveRecord</tt> models. 
+The module is automatically included in <tt>ActiveRecord::Base</tt> and is available for use in all <tt>ActiveRecord</tt> models. 
 
   class Car < ActiveRecord::Base
-    attr_enumerator :color, ["red", "blue"]
+    attr_enumerator :color, ['red', 'blue']
   end
 
 To use <tt>attr_enumerator</tt> on a class that does not descend from <tt>ActiveRecord::Base</tt> it must include <tt>ActiveModel::Validations</tt> and provide an accessor to the attribute.
@@ -20,7 +22,7 @@ To use <tt>attr_enumerator</tt> on a class that does not descend from <tt>Active
     include AttrEnumerator
 
     attr_accessor :color
-    attr_enumerator :color, ["red", "blue"]
+    attr_enumerator :color, ['red', 'blue']
   end
 
 == Configuration
@@ -28,10 +30,10 @@ To use <tt>attr_enumerator</tt> on a class that does not descend from <tt>Active
 Options may be passed to <tt>attr_enumerator</tt> to configure its behavior. For instance, use <tt>:create_constant => false</tt> to prevent a class constant from being created.
 
   class Car < ActiveRecord::Base
-    attr_enumerator :color, ["red", "blue"], :create_constant => false
+    attr_enumerator :color, ['red', 'blue'], :create_constant => false
   end
 
-Options that may be passed directly to <tt>attr_enumerator</tt> may also be configured globally. Options passed directly to <tt>attr_enumerator</tt> will override global options.
+Options can also be configured globally using the following syntax. Options passed directly to <tt>attr_enumerator</tt> will override global options.
 
   AttrEnumerator::Options.configure do |config|
     config.create_constant = false
@@ -40,7 +42,7 @@ Options that may be passed directly to <tt>attr_enumerator</tt> may also be conf
 === Options
 * <tt>create_constant</tt> (default: <tt>true</tt>)
 
-  When <tt>true</tt>, a class constant containing an array of choices is created using the pluralized, uppercased attribute name. Set to a string or symbol to change the constant name or <tt>false</tt> to not create the constant.
+  When <tt>true</tt>, a class constant containing an array of choices is created using the pluralized, uppercased attribute name. Set to a string or symbol to change the constant name or <tt>false</tt> to not create a constant.
   
 * <tt>create_methods</tt> (default: <tt>true</tt>)
 
@@ -58,7 +60,7 @@ Options that may be passed directly to <tt>attr_enumerator</tt> may also be conf
 
   See <tt>prefix</tt>.
 
-* <tt>message</tt> (default: <tt>"is invalid"</tt>)
+* <tt>message</tt> (default: <tt>'is invalid'</tt>)
 
   Specifies the error message when the attribute is not a valid value. Use <tt>%{value}</tt> to refer to the value of the attribute, e.g. <tt>"%{value} is not a valid choice"</tt>.
 

@@ -109,7 +109,7 @@ describe "AttrEnumerator" do
 
       it "should allow for not creating a constant" do
         subject.attr_enumerator :choice, ['red', 'blue'], :create_constant => false
-        subject.constants.should_not include('COLORS')
+        subject.constants.should_not include('CHOICES')
       end
     end
 

@@ -15,9 +15,9 @@ Jeweler::Tasks.new do |gem|
   gem.name = "attr_enumerator"
   gem.homepage = "http://github.com/chrisb87/attr_enumerator"
   gem.license = "MIT"
-  gem.summary = %Q{Enumerated attributes for ActiveModel}
-  gem.description = %Q{Enumerated attributes for ActiveModel}
-  gem.email = "baker@socialvibe.com"
+  gem.summary = %Q{A customizable method for restricting an attribute to a set of choices}
+  gem.description = %Q{A customizable method for restricting an attribute to a set of choices}
+  gem.email = "baker.chris.3@gmail.com"
   gem.authors = ["Chris Baker"]
 end
 Jeweler::RubygemsDotOrgTasks.new
