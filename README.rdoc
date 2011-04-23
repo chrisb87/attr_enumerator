@@ -12,7 +12,7 @@ By default, <tt>attr_enumerator</tt> will create:
 The module is automatically included in <tt>ActiveRecord::Base</tt> and is available for use in all <tt>ActiveRecord</tt> models. 
 
   class Car < ActiveRecord::Base
-    attr_enumerator :color, ['red', 'blue']
+    attr_enumerator :color, :in => ['red', 'blue']
   end
 
 To use <tt>attr_enumerator</tt> on a class that does not descend from <tt>ActiveRecord::Base</tt> it must include <tt>ActiveModel::Validations</tt> and provide an accessor to the attribute.
@@ -22,44 +22,18 @@ To use <tt>attr_enumerator</tt> on a class that does not descend from <tt>Active
     include AttrEnumerator
 
     attr_accessor :color
-    attr_enumerator :color, ['red', 'blue']
-  end
-
-== Configuration
-
-Options may be passed to <tt>attr_enumerator</tt> to configure its behavior. For instance, use <tt>:create_constant => false</tt> to prevent a class constant from being created.
-
-  class Car < ActiveRecord::Base
-    attr_enumerator :color, ['red', 'blue'], :create_constant => false
-  end
-
-Options can also be configured globally using the following syntax. Options passed directly to <tt>attr_enumerator</tt> will override global options.
-
-  AttrEnumerator::Options.configure do |config|
-    config.create_constant = false
+    attr_enumerator :color, :in => ['red', 'blue']
   end
 
 === Options
-* <tt>create_constant</tt> (default: <tt>true</tt>)
+* <tt>constant</tt>
 
-  When <tt>true</tt>, a class constant containing an array of choices is created using the pluralized, uppercased attribute name. Set to a string or symbol to change the constant name or <tt>false</tt> to not create a constant.
+  Defines the constant name for the enumeration.  By default, the pluralized, upper-case form of the attribute name is used.  (e.g. COLORS if attr is color, ENGINE_TYPES if attr is engine_type)
   
-* <tt>create_methods</tt> (default: <tt>true</tt>)
-
-  When <tt>true</tt>, create a method for each choice that returns <tt>true</tt> if the attribute is that value and <tt>false</tt> otherwise. Use the <tt>prefix</tt> and <tt>suffix</tt> options to customize the method names. Set to <tt>false</tt> to not create methods.
-
-* <tt>create_scopes</tt> (default: <tt>true</tt>, ignored when not using <tt>ActiveRecord</tt>)
-
-  When <tt>true</tt>, create a scope for each choice that retrieves records where the attribute is that value. Use the <tt>prefix</tt> and <tt>suffix</tt> options to customize the scope names. Set to <tt>false</tt> to not create scopes.
-
 * <tt>prefix</tt> (default: <tt>true</tt>)
 
   When <tt>true</tt>, prefixes created methods and scopes with the attribute name. Set to a string or symbol to change the prefix or <tt>false</tt> to disable.
   
-* <tt>suffix</tt> (default: <tt>false</tt>)
-
-  See <tt>prefix</tt>.
-
 * <tt>message</tt> (default: <tt>'is invalid'</tt>)
 
   Specifies the error message when the attribute is not a valid value. Use <tt>%{value}</tt> to refer to the value of the attribute, e.g. <tt>"%{value} is not a valid choice"</tt>.
