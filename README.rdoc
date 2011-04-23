@@ -30,11 +30,10 @@ To use <tt>attr_enumerator</tt> on a class that does not descend from <tt>Active
 
   Defines the constant name for the enumeration.  By default, the pluralized, upper-case form of the attribute name is used.  (e.g. COLORS if attr is color, ENGINE_TYPES if attr is engine_type)
   
-* <tt>prefix</tt> (default: <tt>true</tt>)
-
-  When <tt>true</tt>, prefixes created methods and scopes with the attribute name. Set to a string or symbol to change the prefix or <tt>false</tt> to disable.
+* <tt>prefix</tt>
+  Set a custom prefix for methods and scopes.  By default, the field's name is used as a prefix.  Set to <tt>false</tt> to disable.
   
-* <tt>message</tt> (default: <tt>'is invalid'</tt>)
+* <tt>message</tt> (default: <tt>:invalid</tt>)
 
   Specifies the error message when the attribute is not a valid value. Use <tt>%{value}</tt> to refer to the value of the attribute, e.g. <tt>"%{value} is not a valid choice"</tt>.
 
