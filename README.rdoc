@@ -15,7 +15,7 @@ The module is automatically included in <tt>ActiveRecord::Base</tt> and is avail
     attr_enumerator :color, :in => ['red', 'blue']
   end
 
-The above invocation the following to Car:
+The above invocation adds the following to Car:
   car = Car.new
   car.color = 'red'
   car.save
