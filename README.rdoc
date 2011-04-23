@@ -15,7 +15,18 @@ The module is automatically included in <tt>ActiveRecord::Base</tt> and is avail
     attr_enumerator :color, :in => ['red', 'blue']
   end
 
-To use <tt>attr_enumerator</tt> on a class that does not descend from <tt>ActiveRecord::Base</tt> it must include <tt>ActiveModel::Validations</tt> and provide an accessor to the attribute.
+The above invocation the following to Car:
+  car = Car.new
+  car.color = 'red'
+  car.save
+
+  car.color_red?  # => true
+  car.color_blue? # => false
+  
+  Car.color_red   # => [<#Car>]
+  Car.COLORS      # => ['red', 'blue']
+
+To use <tt>attr_enumerator</tt> on a class that does not descend from <tt>ActiveRecord::Base</tt> it must include <tt>ActiveModel::Validations</tt> and provide an accessor to the attribute.  
 
   class Car
     include ActiveModel::Validations
