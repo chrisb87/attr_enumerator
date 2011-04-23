@@ -31,6 +31,7 @@ To use <tt>attr_enumerator</tt> on a class that does not descend from <tt>Active
   Defines the constant name for the enumeration.  By default, the pluralized, upper-case form of the attribute name is used.  (e.g. COLORS if attr is color, ENGINE_TYPES if attr is engine_type)
   
 * <tt>prefix</tt>
+
   Set a custom prefix for methods and scopes.  By default, the field's name is used as a prefix.  Set to <tt>false</tt> to disable.
   
 * <tt>message</tt> (default: <tt>:invalid</tt>)
