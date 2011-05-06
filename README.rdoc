@@ -1,21 +1,40 @@
 = attr_enumerator
 
-A customizable method for restricting an attribute to a set of choices. 
+A method for restricting an attribute to a set of choices.
 
-By default, <tt>attr_enumerator</tt> will create:
+An invocation of <tt>attr_enumerator</tt> will create:
 
 * A <b>validation</b> requiring the attribute value to be one of the provided choices
 * A <b>class constant</b> containing all valid choices
 * <b>Instance methods</b> for each choice, returning <tt>true</tt> if the attribute is that value and <tt>false</tt> otherwise
 * <b>Scopes</b> for each choice that retrieve records where the attribute is that value (only applicable when used with <tt>ActiveRecord</tt>)
 
-The module is automatically included in <tt>ActiveRecord::Base</tt> and is available for use in all <tt>ActiveRecord</tt> models. 
+== Example
 
   class Car < ActiveRecord::Base
     attr_enumerator :color, ['red', 'blue']
   end
 
-To use <tt>attr_enumerator</tt> on a class that does not descend from <tt>ActiveRecord::Base</tt> it must include <tt>ActiveModel::Validations</tt> and provide an accessor to the attribute.
+  car = Car.new
+  car.color = 'red'
+
+  car.color_red?      # => true
+  car.color_blue?     # => false
+
+  Car::COLORS         # => ['red', 'blue']
+
+  car.save
+  Car.color_red       # => [<#Car>]
+
+  car.color = 'green'
+  car.valid?          # => false
+  car.errors          # => #<OrderedHash {:color=>["is invalid"]}>
+
+== With or without ActiveRecord
+
+The <tt>AttrEnumerator</tt> module is automatically included in <tt>ActiveRecord::Base</tt> and is available for use in all ActiveRecord models.
+
+To use <tt>attr_enumerator</tt> on a non-ActiveRecord model the class must include <tt>ActiveModel::Validations</tt> and provide an accessor to the attribute.
 
   class Car
     include ActiveModel::Validations
@@ -27,42 +46,31 @@ To use <tt>attr_enumerator</tt> on a class that does not descend from <tt>Active
 
 == Configuration
 
-Options may be passed to <tt>attr_enumerator</tt> to configure its behavior. For instance, use <tt>:create_constant => false</tt> to prevent a class constant from being created.
+An options hash may be passed as the last argument to <tt>attr_enumerator</tt> to configure its behavior. For example:
 
   class Car < ActiveRecord::Base
-    attr_enumerator :color, ['red', 'blue'], :create_constant => false
+    attr_enumerator :color, ['red', 'blue'], :constant => :PAINT_COLORS, :prefix => :colored
   end
 
-Options can also be configured globally using the following syntax. Options passed directly to <tt>attr_enumerator</tt> will override global options.
+  Car::PAINT_COLORS # => ['red', 'blue']
 
-  AttrEnumerator::Options.configure do |config|
-    config.create_constant = false
-  end
+  car = Car.new
+  car.color = 'red'
+  car.colored_red?  # => true
 
 === Options
-* <tt>create_constant</tt> (default: <tt>true</tt>)
 
-  When <tt>true</tt>, a class constant containing an array of choices is created using the pluralized, uppercased attribute name. Set to a string or symbol to change the constant name or <tt>false</tt> to not create a constant.
-  
-* <tt>create_methods</tt> (default: <tt>true</tt>)
+* <tt>constant</tt> (default: pluralized, uppercased attribute name)
 
-  When <tt>true</tt>, create a method for each choice that returns <tt>true</tt> if the attribute is that value and <tt>false</tt> otherwise. Use the <tt>prefix</tt> and <tt>suffix</tt> options to customize the method names. Set to <tt>false</tt> to not create methods.
+  Set a custom constant name.
 
-* <tt>create_scopes</tt> (default: <tt>true</tt>, ignored when not using <tt>ActiveRecord</tt>)
+* <tt>prefix</tt> (default: attribute name)
 
-  When <tt>true</tt>, create a scope for each choice that retrieves records where the attribute is that value. Use the <tt>prefix</tt> and <tt>suffix</tt> options to customize the scope names. Set to <tt>false</tt> to not create scopes.
+  Set a custom prefix for methods and scopes. Set to <tt>false</tt> to disable.
 
-* <tt>prefix</tt> (default: <tt>true</tt>)
+* <tt>message</tt> (default: internationalized <tt>"is invalid"</tt>)
 
-  When <tt>true</tt>, prefixes created methods and scopes with the attribute name. Set to a string or symbol to change the prefix or <tt>false</tt> to disable.
-  
-* <tt>suffix</tt> (default: <tt>false</tt>)
-
-  See <tt>prefix</tt>.
-
-* <tt>message</tt> (default: <tt>'is invalid'</tt>)
-
-  Specifies the error message when the attribute is not a valid value. Use <tt>%{value}</tt> to refer to the value of the attribute, e.g. <tt>"%{value} is not a valid choice"</tt>.
+  Set the validation error message when the attribute is not a valid value. Use <tt>%{value}</tt> to refer to the value of the attribute, e.g. <tt>"%{value} is not a valid choice"</tt>.
 
 * <tt>allow_nil</tt> (default: <tt>false</tt>)
 
@@ -74,11 +82,11 @@ Options can also be configured globally using the following syntax. Options pass
 
 * <tt>if</tt> (default: unused)
 
-  Specifies a method, proc or string to call to determine if the validation should occur. See <tt>ActiveModel::Validations</tt> for more details.
+  Set a method, proc or string to call to determine if the validation should occur. See <tt>ActiveModel::Validations</tt> for more details.
 
-* <tt>unless</tt>
+* <tt>unless</tt> (default: unused)
 
-  Opposite of <tt>if</tt>.
+  Set a method, proc or string to call to determine if the validation should <em>not</em> occur.
 
 == Contributing to attr_enumerator
 
@@ -88,4 +96,3 @@ Options can also be configured globally using the following syntax. Options pass
 * Start a feature/bugfix branch
 * Commit and push until you are happy with your contribution
 * Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
-* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.

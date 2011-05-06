@@ -69,7 +69,7 @@ describe "AttrEnumerator" do
         instance.should_not be_valid
       end
 
-      it "should handle symbols as enumerations" do
+      it "should handle symbol enumerations distinctively from strings" do
         subject.attr_enumerator :choice, [:red, :blue]
 
         instance.choice = :red
@@ -78,6 +78,7 @@ describe "AttrEnumerator" do
 
         instance.choice = 'red'
         instance.should_not be_valid
+        instance.should_not be_choice_red
       end
     end
 
@@ -92,24 +93,14 @@ describe "AttrEnumerator" do
         subject::CHOICES.should be_frozen
       end
 
-      it "should allow for explicitly creating the default constant" do
-        subject.attr_enumerator :choice, ['red', 'blue'], :create_constant => true
-        subject::CHOICES.should == ['red', 'blue']
-      end
-
       it "should allow for a custom constant name using a symbol" do
-        subject.attr_enumerator :choice, ['red', 'blue'], :create_constant => :POSSIBLE_COLORS
+        subject.attr_enumerator :choice, ['red', 'blue'], :constant => :POSSIBLE_COLORS
         subject::POSSIBLE_COLORS.should == ['red', 'blue']
       end
 
       it "should allow for a custom constant name using a string" do
-        subject.attr_enumerator :choice, ['red', 'blue'], :create_constant => 'POSSIBLE_COLORS'
+        subject.attr_enumerator :choice, ['red', 'blue'], :constant => 'POSSIBLE_COLORS'
         subject::POSSIBLE_COLORS.should == ['red', 'blue']
-      end
-
-      it "should allow for not creating a constant" do
-        subject.attr_enumerator :choice, ['red', 'blue'], :create_constant => false
-        subject.constants.should_not include('CHOICES')
       end
     end
 
@@ -135,24 +126,11 @@ describe "AttrEnumerator" do
           :ends_with_dot? => 'ends.with.dot.'
         }
 
-        subject.attr_enumerator :choice, enumerations.values, :prefix => false, :suffix => false
+        subject.attr_enumerator :choice, enumerations.values, :prefix => false
 
         enumerations.keys.each do |method_name|
           instance.should respond_to method_name
         end
-      end
-
-      it "should allow for explicitly creating the default methods" do
-        subject.attr_enumerator :choice, ['red', 'blue'], :create_methods => true
-        instance.choice = 'red'
-
-        instance.should respond_to :choice_red?
-        instance.should be_choice_red
-      end
-
-      it "should allow for not creating methods" do
-        subject.attr_enumerator :choice, ['red', 'blue'], :create_methods => false
-        instance.should_not respond_to :choice_red?
       end
 
       it "should allow for a custom prefix" do
@@ -166,34 +144,15 @@ describe "AttrEnumerator" do
         instance.should_not be_colored_blue
       end
 
-      it "should allow for explicitly using the default prefix" do
-        subject.attr_enumerator :choice, ['red', 'blue'], :prefix => true
-        instance.should respond_to :choice_red?
-      end
-
       it "should allow for no prefix" do
         subject.attr_enumerator :choice, ['red', 'blue'], :prefix => false
+        instance.choice = 'red'
+
         instance.should respond_to :red?
-      end
+        instance.should be_red
 
-      it "should not have a suffix by default" do
-        subject.attr_enumerator :choice, ['red', 'blue']
-        instance.should respond_to :choice_red?
-      end
-
-      it "should allow for explicitly having no suffix" do
-        subject.attr_enumerator :choice, ['red', 'blue'], :suffix => false
-        instance.should respond_to :choice_red?
-      end
-
-      it "should use the field as a suffix when :suffix is true" do
-        subject.attr_enumerator :choice, ['red', 'blue'], :suffix => true
-        instance.should respond_to :choice_red_choice?
-      end
-
-      it "should allow for a custom suffix" do
-        subject.attr_enumerator :choice, ['red', 'blue'], :suffix => 'custom'
-        instance.should respond_to :choice_red_custom?
+        instance.should respond_to :blue?
+        instance.should_not be_blue
       end
     end
   end
@@ -210,19 +169,19 @@ describe "AttrEnumerator" do
     end
 
     describe "scopes" do
-      it "should create a scope for each enumeration by default" do
+      it "should create a scope for each enumeration" do
         subject.attr_enumerator :choice, ['red', 'blue']
         subject.choice_red.should be_a ActiveRecord::Relation
       end
 
-      it "should allow for explicitly creating scopes" do
-        subject.attr_enumerator :choice, ['red', 'blue'], :create_scopes => true
-        subject.choice_red.should be_a ActiveRecord::Relation
+      it "should create a scope for each enumeration with custom prefix " do
+        subject.attr_enumerator :choice, ['red', 'blue'], :prefix => 'colored'
+        subject.colored_red.should be_a ActiveRecord::Relation
       end
 
-      it "should allow for not creating scopes" do
-        subject.attr_enumerator :choice, ['red', 'blue'], :create_scopes => false
-        subject.should_not respond_to :choice_red
+      it "should create a scope for each enumeration without prefix " do
+        subject.attr_enumerator :choice, ['red', 'blue'], :prefix => false
+        subject.red.should be_a ActiveRecord::Relation
       end
     end
   end
