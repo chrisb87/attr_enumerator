@@ -21,7 +21,7 @@ module AttrEnumerator
         formatted_choice = prefix + choice.to_s.underscore.parameterize('_')
 
         define_method(formatted_choice + '?') { self.send(field) == choice }
-        scope formatted_choice, where(field => choice) if self.respond_to :scope
+        scope formatted_choice, where(field => choice) if self.respond_to? :scope
       end
 
       options[:message] ||= :invalid
