@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{attr_enumerator}
-  s.version = "0.4.0"
+  s.version = "0.4.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Chris Baker"]
@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.files = [
     ".document",
     ".rspec",
+    "CONTRIBUTORS.txt",
     "Gemfile",
     "LICENSE.txt",
     "README.rdoc",
