@@ -70,4 +70,4 @@ module AttrEnumerator
   end
 end
 
-ActiveRecord::Base.class_eval { include AttrEnumerator } if defined? ActiveRecord
+ActiveSupport.on_load(:active_record) { include AttrEnumerator }
