@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{attr_enumerator}
-  s.version = "0.3.0"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Chris Baker"]
-  s.date = %q{2011-03-25}
-  s.description = %q{A customizable method for restricting an attribute to a set of choices}
+  s.date = %q{2011-05-06}
+  s.description = %q{A method for restricting an attribute to a set of choices}
   s.email = %q{baker.chris.3@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -33,15 +33,10 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/chrisb87/attr_enumerator}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
-  s.summary = %q{A customizable method for restricting an attribute to a set of choices}
-  s.test_files = [
-    "spec/attr_enumerator_spec.rb",
-    "spec/spec_helper.rb"
-  ]
+  s.rubygems_version = %q{1.7.2}
+  s.summary = %q{A method for restricting an attribute to a set of choices}
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
