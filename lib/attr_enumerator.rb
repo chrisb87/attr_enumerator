@@ -18,10 +18,10 @@ module AttrEnumerator
       end
 
       choices.each do |choice|
-        formated_choice = prefix + choice.to_s.underscore.parameterize('_')
+        formatted_choice = prefix + choice.to_s.underscore.parameterize('_')
 
-        define_method(formated_choice + '?') { self.send(field) == choice }
-        scope formated_choice, where(field => choice) if self.respond_to?(:scope)
+        define_method(formatted_choice + '?') { self.send(field) == choice }
+        scope formatted_choice, where(field => choice) if self.respond_to :scope
       end
 
       options[:message] ||= :invalid
