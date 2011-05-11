@@ -11,3 +11,5 @@ end
 watch( '^lib/(.*)\.rb'         ) { |m| run("spec/%s_spec.rb" % m[1]) }
 watch( '^spec/spec_helper\.rb' ) { run_all }
 watch( '^spec.*/.*_spec\.rb'   ) { |m| run(m[0]) }
+
+puts "watchr ready"
