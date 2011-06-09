@@ -25,7 +25,12 @@ module AttrEnumerator
       end
 
       options[:message] ||= :invalid
-      validates field, :inclusion => options.merge(:in => choices)
+      
+      if self.respond_to? :validates
+        validates field, :inclusion => options.merge(:in => choices)
+      else 
+        validates_inclusion_of field, options.merge(:in => choices)
+      end
     end
   end
 end
