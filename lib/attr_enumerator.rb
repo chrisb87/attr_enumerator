@@ -5,27 +5,19 @@ module AttrEnumerator
   extend ActiveSupport::Concern
 
   module ClassMethods
-    def attr_enumerator(field, choices, options = {})
-      constant = options.delete(:constant) || field.to_s.pluralize.upcase
+    def attr_enumerator(attribute, choices, options = {})
+      constant = options.delete(:constant) || attribute.to_s.pluralize.upcase
+      prefix = options[:prefix] ? options.delete(:prefix).to_s + '_' : ''
+      options[:message] ||= :invalid
+      
       const_set(constant, choices).freeze
-
-      raw_prefix = options.delete(:prefix)
-
-      prefix = case raw_prefix
-      when false, '' then ''
-      when nil then field.to_s + '_'
-      else raw_prefix.to_s + '_'
-      end
+      validates_inclusion_of attribute, options.merge(:in => choices)
 
       choices.each do |choice|
-        formatted_choice = prefix + choice.to_s.underscore.parameterize('_')
-
-        define_method(formatted_choice + '?') { send(field) == choice }
-        scope formatted_choice, where(field => choice) if respond_to? :scope
+        choice_string = prefix + choice.to_s.underscore.parameterize('_')
+        define_method(choice_string + '?') { send(attribute) == choice }
+        scope choice_string, where(attribute => choice) if respond_to? :scope
       end
-
-      options[:message] ||= :invalid
-      validates field, :inclusion => options.merge(:in => choices)
     end
   end
 end

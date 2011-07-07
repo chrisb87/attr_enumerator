@@ -4,10 +4,10 @@ A method for restricting an attribute to a set of choices.
 
 An invocation of <tt>attr_enumerator</tt> will create:
 
-* A <b>validation</b> requiring the attribute value to be one of the provided choices
-* A <b>class constant</b> containing all valid choices
-* <b>Instance methods</b> for each choice, returning <tt>true</tt> if the attribute is that value and <tt>false</tt> otherwise
-* <b>Scopes</b> for each choice that retrieve records where the attribute is that value (only applicable when used with <tt>ActiveRecord</tt>)
+* a <b>class constant</b> containing all valid choices
+* a <b>validation</b> requiring the attribute's value to be one of the choices
+* <b>instance methods</b> for each choice, returning <tt>true</tt> if the attribute is that value and <tt>false</tt> otherwise
+* <b>scopes</b> for each choice that retrieve records where the attribute is that value
 
 == Example
 
@@ -15,26 +15,30 @@ An invocation of <tt>attr_enumerator</tt> will create:
     attr_enumerator :color, ['red', 'blue']
   end
 
+  # constant
+  Car::COLORS           # => ['red', 'blue']
+
+  # validation
   car = Car.new
-  car.color = 'red'
-
-  car.color_red?      # => true
-  car.color_blue?     # => false
-
-  Car::COLORS         # => ['red', 'blue']
-
-  car.save
-  Car.color_red       # => [<#Car>]
-
   car.color = 'green'
-  car.valid?          # => false
-  car.errors          # => #<OrderedHash {:color=>["is invalid"]}>
+  car.valid?            # => false
+  car.errors            # => {:color => ["is invalid"]}
+  car.color = 'red'
+  car.valid?            # => true
+
+  # instance methods
+  car.red?              # => true
+  car.blue?             # => false
+
+  # scopes
+  car.save
+  Car.red               # => [<#Car>]
 
 == With or without ActiveRecord
 
-The <tt>AttrEnumerator</tt> module is automatically included in <tt>ActiveRecord::Base</tt> and is available for use in all ActiveRecord models.
+The <tt>AttrEnumerator</tt> module will be automatically included in <tt>ActiveRecord::Base</tt>, making the <tt>attr_enumerator</tt> method available in all ActiveRecord models.
 
-To use <tt>attr_enumerator</tt> on a non-ActiveRecord model the class must include <tt>ActiveModel::Validations</tt> and provide an accessor to the attribute.
+To include <tt>AttrEnumerator</tt> on a non-ActiveRecord model the class must also include <tt>ActiveModel::Validations</tt> and provide an accessor to the attribute. The model will have all the above functionality except no scopes will be generated.
 
   class Car
     include ActiveModel::Validations
@@ -46,17 +50,17 @@ To use <tt>attr_enumerator</tt> on a non-ActiveRecord model the class must inclu
 
 == Configuration
 
-An options hash may be passed as the last argument to <tt>attr_enumerator</tt> to configure its behavior. For example:
+Options may be passed as the last argument to <tt>attr_enumerator</tt> to configure its behavior. For example:
 
   class Car < ActiveRecord::Base
-    attr_enumerator :color, ['red', 'blue'], :constant => :PAINT_COLORS, :prefix => :colored
+    attr_enumerator :color, ['red', 'blue'], :constant => :PAINT_COLORS, :prefix => :painted
   end
 
-  Car::PAINT_COLORS # => ['red', 'blue']
+  Car::PAINT_COLORS   # => ['red', 'blue']
 
   car = Car.new
   car.color = 'red'
-  car.colored_red?  # => true
+  car.painted_red?    # => true
 
 === Options
 
@@ -64,29 +68,21 @@ An options hash may be passed as the last argument to <tt>attr_enumerator</tt> t
 
   Set a custom constant name.
 
-* <tt>prefix</tt> (default: attribute name)
+* <tt>prefix</tt> (default: <tt>nil</tt>)
 
-  Set a custom prefix for methods and scopes. Set to <tt>false</tt> to disable.
+  Set a prefix for generated methods and scopes.
 
 * <tt>message</tt> (default: internationalized <tt>"is invalid"</tt>)
 
   Set the validation error message when the attribute is not a valid value. Use <tt>%{value}</tt> to refer to the value of the attribute, e.g. <tt>"%{value} is not a valid choice"</tt>.
 
-* <tt>allow_nil</tt> (default: <tt>false</tt>)
+* <tt>allow_nil</tt> / <tt>allow_blank</tt> (default: <tt>false</tt>)
 
-  Allow the attribute to be <tt>nil</tt>.
+  Do not fail validation when the attribute is <tt>nil</tt> or blank.
 
-* <tt>allow_blank</tt> (default: <tt>false</tt>)
-
-  Allow the attribute to be blank.
-
-* <tt>if</tt> (default: unused)
+* <tt>if</tt> / <tt>unless</tt> (default: unused)
 
   Set a method, proc or string to call to determine if the validation should occur. See <tt>ActiveModel::Validations</tt> for more details.
-
-* <tt>unless</tt> (default: unused)
-
-  Set a method, proc or string to call to determine if the validation should <em>not</em> occur.
 
 == Contributing to attr_enumerator
 
