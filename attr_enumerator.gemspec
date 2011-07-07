@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{attr_enumerator}
-  s.version = "0.4.1"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Chris Baker"]
-  s.date = %q{2011-05-06}
+  s.date = %q{2011-07-07}
   s.description = %q{A method for restricting an attribute to a set of choices}
   s.email = %q{baker.chris.3@gmail.com}
   s.extra_rdoc_files = [
