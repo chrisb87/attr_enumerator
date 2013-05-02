@@ -11,7 +11,7 @@ describe "AttrEnumerator" do
         attr_accessor :color
       end
     end
-    
+
     after(:each)  { Object.send(:remove_const, :Car) }
 
     context "validation" do
@@ -30,14 +30,14 @@ describe "AttrEnumerator" do
       it "should have a default message" do
         Car.attr_enumerator :color, ['red', 'blue']
         car.valid?
-        car.errors.should == {:color => ['is invalid']}
+        car.errors[:color].should == ['is invalid']
       end
 
       it "should allow for a custom message" do
         Car.attr_enumerator :color, ['red', 'blue'], :message => '%{value} is not a valid color'
         car.color = 'green'
         car.valid?
-        car.errors.should == {:color => ['green is not a valid color']}
+        car.errors[:color].should == ['green is not a valid color']
       end
 
       it "should handle allow_blank" do
@@ -144,7 +144,7 @@ describe "AttrEnumerator" do
         attr_accessor :color
       end
     end
-    
+
     after(:each)  { Object.send(:remove_const, :Car) }
 
     it "should automatically be included in ActiveRecord::Base" do
