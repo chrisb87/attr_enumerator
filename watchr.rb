@@ -1,3 +1,5 @@
+#!/usr/bin/env watchr
+
 def run(cmd)
   full_command = "bundle exec rspec #{cmd}"
   puts(full_command)
